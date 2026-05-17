@@ -431,10 +431,87 @@ function renderReview() {
         <button onclick="reviewResult('ok')">Okay. Advance.</button>
         <button onclick="reviewResult('easy')">Easy. Skip ahead.</button>
       </div>
-      <div style="color:var(--ink-faint);font-size:0.78rem;margin-top:1rem;">tap any blocked word to peek</div>
+      <div style="color:var(--ink-faint);font-size:0.78rem;margin-top:1rem;">tap any blocked word to peek &middot; <a href="#" onclick="enterTypeMode();return false;" style="color:var(--accent);text-decoration:underline;">or type it from memory →</a></div>
     </div>
   `;
 }
+
+window.enterTypeMode = () => {
+  const sorted = [...state.verses].sort((a, b) => {
+    if (a.level !== b.level) return a.level - b.level;
+    return (a.lastReview || '').localeCompare(b.lastReview || '');
+  });
+  const v = sorted[0];
+  const panel = document.getElementById('review-panel');
+  panel.innerHTML = `
+    <div class="review-stage">
+      <div class="review-ref">${escapeHtml(v.ref)}</div>
+      <p style="color:var(--ink-soft);margin-bottom:1.25rem;">Type the verse from memory. Word-by-word grading shows hits and misses on submit.</p>
+      <textarea id="type-input" placeholder="Type the verse exactly as you remember..." style="min-height:140px;text-align:left;"></textarea>
+      <div class="difficulty-bar">
+        <button onclick="gradeTyped('${v.id}')">Grade my typing</button>
+        <button class="ghost" onclick="renderReview()">Back to hide mode</button>
+      </div>
+      <div id="grade-result" style="margin-top:1.5rem;"></div>
+    </div>
+  `;
+  setTimeout(() => document.getElementById('type-input').focus(), 50);
+};
+
+window.gradeTyped = (id) => {
+  const v = state.verses.find(x => x.id === id);
+  if (!v) return;
+  const typed = document.getElementById('type-input').value.trim();
+  if (!typed) { alert('Type something first.'); return; }
+
+  // Normalize for comparison
+  const normalize = (s) => s.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+  const refWords = normalize(v.text).split(' ');
+  const typedWords = normalize(typed).split(' ');
+
+  // Word-by-word grading: align positions, mark hits and misses
+  const result = [];
+  const maxLen = Math.max(refWords.length, typedWords.length);
+  let hits = 0;
+  for (let i = 0; i < maxLen; i++) {
+    const ref = refWords[i] || '';
+    const tp = typedWords[i] || '';
+    if (ref === tp) {
+      result.push(`<span style="color:var(--done);">${escapeHtml(tp)}</span>`);
+      hits++;
+    } else if (tp) {
+      result.push(`<span style="color:#c46a4a;text-decoration:line-through;">${escapeHtml(tp)}</span> <span style="color:var(--ink-faint);">[${escapeHtml(ref)}]</span>`);
+    } else {
+      result.push(`<span style="color:var(--ink-faint);">[${escapeHtml(ref)}]</span>`);
+    }
+  }
+  const pct = Math.round((hits / refWords.length) * 100);
+  const verdict = pct >= 95 ? 'easy' : pct >= 75 ? 'ok' : 'hard';
+
+  v.reviews = (v.reviews || 0) + 1;
+  v.lastReview = new Date().toISOString();
+  if (verdict === 'easy') v.level = Math.min(4, v.level + 2);
+  else if (verdict === 'ok') v.level = Math.min(4, v.level + 1);
+  // hard: stay
+  v.lastTypingScore = pct;
+  save();
+
+  const verdictText = {
+    easy: `<strong style="color:var(--done);">${pct}% — clean.</strong> Advanced two levels.`,
+    ok: `<strong style="color:var(--accent);">${pct}% — okay.</strong> Advanced one level.`,
+    hard: `<strong style="color:#c46a4a;">${pct}% — hold here.</strong> Stayed at level ${v.level + 1}.`,
+  }[verdict];
+
+  document.getElementById('grade-result').innerHTML = `
+    <div style="background:var(--bg);padding:1rem 1.25rem;border-radius:8px;border-left:3px solid var(--accent);margin-bottom:1rem;text-align:left;">
+      <div style="font-family:Georgia,serif;line-height:1.85;">${result.join(' ')}</div>
+    </div>
+    <div style="text-align:center;color:var(--ink);">${verdictText}</div>
+    <div style="text-align:center;margin-top:1rem;">
+      <button onclick="renderReview()">Next verse</button>
+    </div>
+  `;
+};
 
 window.reviewResult = (verdict) => {
   const sorted = [...state.verses].sort((a, b) => {
