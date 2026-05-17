@@ -471,6 +471,7 @@ function renderReview() {
         <button onclick="reviewResult('easy')">Easy. Skip ahead.</button>
       </div>
       <div style="color:var(--ink-faint);font-size:0.78rem;margin-top:1rem;">tap any blocked word to peek &middot; <a href="#" onclick="enterTypeMode();return false;" style="color:var(--accent);text-decoration:underline;">or type it from memory →</a></div>
+      <div style="color:var(--ink-faint);font-size:0.72rem;margin-top:0.4rem;">keys: H hard · O okay · E easy · T type</div>
     </div>
   `;
 }
@@ -742,6 +743,19 @@ function renderAll() {
   renderLibrary();
   renderStats();
 }
+
+// Keyboard shortcuts during review: H = hard, O = okay, E = easy, T = type mode
+document.addEventListener('keydown', (e) => {
+  // Only on review view; only when not typing in an input/textarea
+  const inView = document.getElementById('view-review').style.display !== 'none';
+  if (!inView) return;
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  const key = e.key.toLowerCase();
+  if (key === 'h') { reviewResult('hard'); e.preventDefault(); }
+  else if (key === 'o') { reviewResult('ok'); e.preventDefault(); }
+  else if (key === 'e') { reviewResult('easy'); e.preventDefault(); }
+  else if (key === 't') { enterTypeMode(); e.preventDefault(); }
+});
 
 document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => showView(t.dataset.view)));
 document.getElementById('add-btn').addEventListener('click', () => {
