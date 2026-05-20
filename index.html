@@ -8,268 +8,476 @@
 <meta property="og:title" content="Verse Vault — memorize scripture without humiliation">
 <meta property="og:description" content="Progressive-hide scripture memorization. Add verses, review, retain.">
 <meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
+/*  ============================================================
+    VERSE VAULT · library card catalog / index-card system
+    -----------------------------------------------------------
+    Theme: a wooden card-catalog cabinet from a 1950s library.
+    Each verse is a manila index card filed under its reference
+    code. Typewriter text. Stamped dates. Pencil annotations.
+    Industrial / utilitarian — opposite category from any of
+    the editorial / minimalist / casino / candlelit themes.
+    ============================================================ */
+
   :root {
-    --bg: #f7f1e3;
-    --panel: #fffbef;
-    --ink: #1d1812;
-    --ink-soft: #6b5a44;
-    --ink-faint: #a89880;
-    --accent: #8a6a3a;
-    --accent-light: #c2a173;
-    --done: #4a7c3d;
-    --hidden: #e0d2b0;
-    --border: #e5d9c0;
-    --serif: Georgia, "Times New Roman", serif;
+    --kraft:#c4a574;
+    --kraft-deep:#a88555;
+    --kraft-dark:#7a5a32;
+    --card:#f5edd3;
+    --card-edge:#d8c896;
+    --card-shadow:#8a6a3a;
+    --manila:#d8b964;
+    --ink:#1f1812;
+    --ink-soft:#4a3a26;
+    --pencil:#6e6358;
+    --stamp:#8b2920;
+    --stamp-light:#b04030;
+    --done:#3a5a2a;
+    --hidden:#a89880;
+    --rule:rgba(31, 24, 18, 0.18);
+    --rule-strong:rgba(31, 24, 18, 0.42);
+
+    --display:'Oswald', sans-serif;
+    --type:'Special Elite', 'Courier Prime', monospace;
+    --mono:'Courier Prime', monospace;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    background: var(--bg);
+    font-family: var(--mono);
+    background: var(--kraft);
     color: var(--ink);
-    line-height: 1.6;
+    line-height: 1.55;
     min-height: 100vh;
-    padding: 1rem;
+    padding: 0;
+    background-image:
+      /* Wood-grain horizontal lines */
+      repeating-linear-gradient(180deg,
+        transparent 0px, transparent 80px,
+        rgba(122, 90, 50, 0.06) 80px, rgba(122, 90, 50, 0.06) 82px),
+      /* Soft kraft variance */
+      radial-gradient(ellipse 80% 60% at 50% 40%, rgba(216, 185, 100, 0.15) 0%, transparent 70%);
+    position: relative;
   }
-  .container { max-width: 640px; margin: 0 auto; }
+  body::before {
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+    opacity:0.12;mix-blend-mode:multiply;
+  }
+  .container { max-width: 720px; margin: 0 auto; padding: 0 24px; position:relative; z-index:2; }
 
-  header { text-align: center; padding: 2rem 0 1.5rem; }
+  /* HEADER — catalog cabinet drawer label */
+  header {
+    text-align: left;
+    padding: 36px 0 24px;
+    border-bottom: 4px solid var(--ink);
+    position: relative;
+  }
+  header::after {
+    content:"";
+    position:absolute;left:0;right:0;bottom:-8px;height:1px;background:var(--ink);
+  }
+  .drawer-label {
+    display: inline-block;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--kraft-dark);
+    background: var(--manila);
+    padding: 5px 12px;
+    border: 1px solid var(--kraft-dark);
+    margin-bottom: 18px;
+    text-transform: uppercase;
+  }
   header h1 {
-    font-family: var(--serif);
-    font-size: clamp(2rem, 6vw, 2.75rem);
-    color: var(--accent);
-    margin-bottom: 0.3rem;
-    letter-spacing: -0.01em;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(2.5rem, 8vw, 4.2rem);
+    color: var(--ink);
+    margin: 0;
+    letter-spacing: -0.005em;
+    line-height: 0.95;
+    text-transform: uppercase;
   }
   header p {
+    font-family: var(--type);
     color: var(--ink-soft);
-    font-style: italic;
-    font-size: 0.95rem;
+    font-style: normal;
+    font-size: 15px;
+    margin-top: 14px;
+    letter-spacing: -0.01em;
   }
+  /* Cabinet card-catalog metadata strip */
+  .cabinet-meta {
+    display: flex;
+    gap: 22px;
+    margin-top: 16px;
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--kraft-dark);
+    text-transform: uppercase;
+    border-top: 1px dashed var(--kraft-dark);
+    border-bottom: 1px dashed var(--kraft-dark);
+    padding: 8px 0;
+  }
+  .cabinet-meta span:first-child { font-weight: 700; color: var(--ink); }
 
+  /* TABS — like card-catalog divider tabs */
   .tabs {
     display: flex;
-    gap: 0.4rem;
-    margin-bottom: 1.5rem;
+    gap: 0;
+    margin: 24px 0 28px;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
+    position: sticky; top: 0; z-index: 5;
+    background: var(--kraft);
+    padding-top: 4px;
+    border-bottom: 2px solid var(--ink);
   }
   .tab {
-    padding: 0.55rem 1.1rem;
-    background: transparent;
-    color: var(--ink-soft);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    font-family: inherit;
-    font-size: 0.85rem;
+    padding: 10px 16px 8px;
+    background: var(--manila);
+    color: var(--ink);
+    border: 1px solid var(--ink);
+    border-bottom: none;
+    margin-right: 2px;
+    border-radius: 0;
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
     cursor: pointer;
+    position: relative;
+    transition: all .12s;
+    top: 1px;
   }
   .tab.active {
-    background: var(--accent);
-    color: var(--bg);
-    border-color: var(--accent);
+    background: var(--card);
+    color: var(--ink);
+    z-index: 2;
+    font-weight: 700;
+    box-shadow: 0 -2px 0 var(--stamp);
   }
   .tab:hover:not(.active) {
-    border-color: var(--accent);
-    color: var(--ink);
+    background: var(--card-edge);
   }
 
+  /* PANEL — a single index card */
   .panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 1px 3px rgba(29,24,18,0.06);
+    background: var(--card);
+    border: 1px solid var(--card-shadow);
+    border-radius: 0;
+    padding: 28px 32px 28px;
+    margin-bottom: 18px;
+    box-shadow:
+      0 1px 0 var(--card-edge),
+      0 6px 14px rgba(31, 24, 18, 0.18);
+    position: relative;
   }
+  /* Ruled lines on the card */
+  .panel::before {
+    content: "";
+    position: absolute;
+    top: 70px; left: 32px; right: 32px; bottom: 28px;
+    background-image: repeating-linear-gradient(180deg,
+      transparent 0px, transparent 28px,
+      rgba(31, 24, 18, 0.08) 28px, rgba(31, 24, 18, 0.08) 29px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  /* Red margin-line on the left */
+  .panel::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 22px; bottom: 0;
+    width: 1px;
+    background: var(--stamp);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .panel > * { position: relative; z-index: 1; }
   .panel h2 {
-    font-family: var(--serif);
-    font-size: 1.1rem;
-    color: var(--accent);
-    margin-bottom: 0.85rem;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--ink);
+    margin-bottom: 14px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 6px;
   }
   .panel p.prompt {
+    font-family: var(--type);
     color: var(--ink-soft);
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
+    margin-bottom: 18px;
+    font-size: 14px;
+    line-height: 1.6;
   }
 
   textarea, input[type="text"], select {
     width: 100%;
-    border: 1px solid var(--border);
-    background: #fff;
-    border-radius: 6px;
-    padding: 0.75rem 1rem;
+    border: none;
+    border-bottom: 1px solid var(--ink);
+    background: transparent;
+    border-radius: 0;
+    padding: 8px 4px;
     color: var(--ink);
-    font-family: inherit;
-    font-size: 1rem;
-    line-height: 1.55;
+    font-family: var(--type);
+    font-size: 17px;
+    line-height: 1.7;
     resize: vertical;
   }
-  textarea { min-height: 100px; margin-bottom: 0.75rem; }
+  textarea { min-height: 110px; margin-bottom: 14px; }
   input:focus, textarea:focus, select:focus {
     outline: none;
-    border-color: var(--accent);
+    border-bottom-color: var(--stamp);
+  }
+  input::placeholder, textarea::placeholder {
+    color: var(--pencil); font-family: var(--type); font-style: italic;
   }
 
   button {
     background: var(--ink);
-    color: var(--bg);
+    color: var(--card);
     border: none;
-    padding: 0.65rem 1.3rem;
-    border-radius: 6px;
+    padding: 11px 22px;
+    border-radius: 0;
     cursor: pointer;
-    font-family: inherit;
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: all .12s;
   }
-  button:hover { background: var(--accent); }
+  button:hover { background: var(--stamp); }
   button.ghost {
     background: transparent;
-    color: var(--ink-soft);
-    border: 1px solid var(--border);
+    color: var(--ink);
+    border: 1px solid var(--ink);
   }
-  button.ghost:hover { background: var(--bg); color: var(--ink); border-color: var(--accent); }
+  button.ghost:hover { background: var(--ink); color: var(--card); border-color: var(--ink); }
   button.done { background: var(--done); }
-  button.done:hover { background: #3a5c2d; }
+  button.done:hover { background: #2a4520; }
 
-  .row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
 
+  /* VERSE CARDS — sub-cards inside the library list */
   .verse-card {
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--border);
+    padding: 14px 0 14px 14px;
+    border-bottom: 1px dashed var(--rule-strong);
+    position: relative;
   }
   .verse-card:last-child { border-bottom: none; }
+  .verse-card::before {
+    content: "•";
+    position: absolute;
+    left: 0; top: 14px;
+    color: var(--stamp); font-size: 16px;
+  }
   .verse-card .ref {
-    color: var(--accent);
-    font-weight: 600;
-    font-size: 0.85rem;
+    font-family: var(--display);
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 13px;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 0.4rem;
+    margin-bottom: 6px;
   }
   .verse-card .text {
-    font-family: var(--serif);
-    color: var(--ink);
-    line-height: 1.7;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
+    font-family: var(--type);
+    color: var(--ink-soft);
+    line-height: 1.6;
+    font-size: 15px;
+    margin-bottom: 8px;
   }
   .verse-card .meta {
-    color: var(--ink-faint);
-    font-size: 0.78rem;
-    margin-bottom: 0.5rem;
+    font-family: var(--mono);
+    color: var(--pencil);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
   }
   .verse-card .actions {
     display: flex;
-    gap: 0.4rem;
+    gap: 6px;
     flex-wrap: wrap;
-    margin-top: 0.4rem;
+    margin-top: 8px;
   }
-  .verse-card .actions button { padding: 0.3rem 0.7rem; font-size: 0.78rem; }
+  .verse-card .actions button { padding: 5px 10px; font-size: 9.5px; letter-spacing: 0.16em; }
 
+  /* REVIEW STAGE — the full index-card presentation */
   .review-stage {
-    text-align: center;
-    padding: 2rem 0;
+    text-align: left;
+    padding: 12px 0;
+    position: relative;
+  }
+  /* Filed-on stamp top-right */
+  .review-stage::before {
+    content: "REVIEW " attr(data-n);
+    position: absolute;
+    top: 0; right: 0;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--stamp);
+    border: 2px solid var(--stamp);
+    padding: 4px 9px;
+    transform: rotate(2deg);
+    background: rgba(255, 252, 234, 0.6);
   }
   .review-ref {
-    color: var(--accent);
-    font-size: 0.8rem;
+    font-family: var(--display);
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 14px;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
-    margin-bottom: 1rem;
+    letter-spacing: 0.22em;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 6px;
+    display: inline-block;
   }
   .review-text {
-    font-family: var(--serif);
-    font-size: 1.25rem;
-    line-height: 1.9;
+    font-family: var(--type);
+    font-size: 19px;
+    line-height: 2;
     color: var(--ink);
-    margin: 0 auto 2rem;
-    max-width: 540px;
+    margin: 22px 0 28px;
+    max-width: 100%;
   }
   .review-text .word.hidden {
     display: inline-block;
-    background: var(--hidden);
-    color: var(--hidden);
-    border-radius: 3px;
-    padding: 0 0.25rem;
+    background: var(--ink);
+    color: var(--ink);
+    border-radius: 0;
+    padding: 0 6px;
     user-select: none;
     cursor: pointer;
+    border-bottom: 2px solid var(--stamp);
   }
-  .review-text .word.hidden:hover {
-    color: var(--ink);
-  }
+  .review-text .word.hidden:hover { color: var(--card); }
   .review-text .word.revealed {
-    background: #fff2c4;
+    background: rgba(255, 200, 100, 0.4);
+    color: var(--ink);
+    border-bottom-color: var(--ink);
   }
   .review-difficulty {
-    color: var(--ink-faint);
-    font-size: 0.85rem;
-    margin-bottom: 1rem;
+    font-family: var(--mono);
+    color: var(--pencil);
+    font-size: 11.5px;
+    margin-bottom: 14px;
+    letter-spacing: 0.04em;
   }
   .difficulty-bar {
     display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin: 1rem 0;
+    justify-content: flex-start;
+    gap: 8px;
+    margin: 18px 0;
+    flex-wrap: wrap;
   }
   .difficulty-bar button {
     background: transparent;
-    color: var(--accent);
-    border: 1px solid var(--accent);
-    padding: 0.45rem 0.85rem;
-    font-size: 0.85rem;
+    color: var(--ink);
+    border: 1.5px solid var(--ink);
+    padding: 9px 14px;
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
   }
-  .difficulty-bar button:hover { background: var(--accent); color: var(--bg); }
+  .difficulty-bar button:hover { background: var(--ink); color: var(--card); }
 
   .stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.6rem;
+    gap: 0;
+    border: 2px solid var(--ink);
+    margin-bottom: 12px;
   }
   .stat {
     text-align: center;
-    padding: 0.85rem 0.4rem;
-    background: var(--bg);
-    border-radius: 8px;
+    padding: 18px 10px;
+    background: transparent;
+    border-radius: 0;
+    border-right: 1px solid var(--ink);
   }
+  .stat:last-child { border-right: none; }
   .stat .n {
-    font-family: var(--serif);
-    font-size: 1.6rem;
-    color: var(--accent);
-    line-height: 1.1;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 32px;
+    color: var(--ink);
+    line-height: 1;
   }
   .stat .l {
-    font-size: 0.72rem;
+    font-family: var(--mono);
+    font-size: 10px;
     color: var(--ink-soft);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-top: 0.25rem;
+    letter-spacing: 0.2em;
+    margin-top: 8px;
   }
 
   .empty {
-    text-align: center;
-    color: var(--ink-faint);
-    padding: 1.5rem 0;
+    text-align: left;
+    color: var(--pencil);
+    padding: 18px 0;
+    font-family: var(--type);
     font-style: italic;
+    font-size: 14.5px;
   }
 
   footer {
-    text-align: center;
-    margin-top: 2rem;
-    color: var(--ink-faint);
-    font-size: 0.8rem;
-    line-height: 1.6;
+    text-align: left;
+    margin-top: 32px;
+    padding: 22px 0 40px;
+    border-top: 2px solid var(--ink);
+    font-family: var(--mono);
+    color: var(--pencil);
+    font-size: 12px;
+    line-height: 1.7;
   }
-  footer a { color: var(--accent); text-decoration: none; }
+  footer a { color: var(--ink); text-decoration: underline; }
+  .credit {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 9px;
+    letter-spacing: 0.42em;
+    color: var(--kraft-dark);
+    margin-top: 14px;
+    opacity: 0.75;
+  }
+
+  @media (max-width: 600px) {
+    .container { padding: 0 18px; }
+    header h1 { font-size: 2.4rem; }
+    .panel { padding: 22px 22px 22px 30px; }
+    .review-text { font-size: 16px; line-height: 1.9; }
+    .review-stage::before { font-size: 9px; }
+    .stats { grid-template-columns: repeat(3, 1fr); }
+    .stat .n { font-size: 24px; }
+  }
 </style>
 </head>
 <body>
 <div class="container">
 
 <header>
+  <span class="drawer-label">VV · Scripture Drawer</span>
   <h1>Verse Vault</h1>
-  <p>memorize scripture without humiliation</p>
+  <p>memorize scripture without humiliation · spaced-recall · progressive hide</p>
+  <div class="cabinet-meta">
+    <span>SHELF: VV</span>
+    <span>DEWEY: 220.52</span>
+    <span>CIRCULATION: PRIVATE</span>
+  </div>
 </header>
 
 <div class="tabs">
@@ -333,9 +541,10 @@
 </div>
 
 <footer>
-  <p>No cloud. No reminders. No streaks shame.<br>
-  <a href="https://github.com/thebigjah/verse-vault">source</a>
+  <p>NO CLOUD · NO REMINDERS · NO STREAK SHAME<br>
+  <a href="https://github.com/thebigjah/verse-vault">github.com/thebigjah/verse-vault</a>
   </p>
+  <div class="credit">— PURCELLVENTURES.CO —</div>
 </footer>
 
 </div>
