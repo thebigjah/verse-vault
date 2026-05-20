@@ -661,7 +661,7 @@ function renderReview() {
   const levelLabels = ['full visible', '25% hidden', '50% hidden', '75% hidden', 'cold recall (100% hidden)'];
 
   panel.innerHTML = `
-    <div class="review-stage">
+    <div class="review-stage" data-n="${(v.reviews || 0) + 1}">
       <div class="review-ref">${escapeHtml(v.ref)}</div>
       <div class="review-text" id="review-text">
         ${words.map((w, i) => {
@@ -693,7 +693,7 @@ window.enterTypeMode = () => {
   const v = sorted[0];
   const panel = document.getElementById('review-panel');
   panel.innerHTML = `
-    <div class="review-stage">
+    <div class="review-stage" data-n="${(v.reviews || 0) + 1}">
       <div class="review-ref">${escapeHtml(v.ref)}</div>
       <p style="color:var(--ink-soft);margin-bottom:1.25rem;">Type the verse from memory. Word-by-word grading shows hits and misses on submit.</p>
       <textarea id="type-input" placeholder="Type the verse exactly as you remember..." style="min-height:140px;text-align:left;"></textarea>
