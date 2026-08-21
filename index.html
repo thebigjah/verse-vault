@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Verse Vault, memorize scripture | Elijah Purcell</title>
 <meta name="description" content="Spaced-recall scripture memorization: it hides more of the verse each session until you are saying it cold. By Elijah Purcell, Purcell Ventures LLC.">
-<meta property="og:title" content="Verse Vault — memorize scripture without humiliation">
+<meta property="og:title" content="Verse Vault, memorize scripture without humiliation">
 <meta property="og:description" content="Spaced-recall scripture memorization: it hides more of the verse each session until you are saying it cold. By Elijah Purcell, Purcell Ventures LLC.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,7 +18,7 @@
     Theme: a wooden card-catalog cabinet from a 1950s library.
     Each verse is a manila index card filed under its reference
     code. Typewriter text. Stamped dates. Pencil annotations.
-    Industrial / utilitarian — opposite category from any of
+    Industrial / utilitarian, opposite category from any of
     the editorial / minimalist / casino / candlelit themes.
     ============================================================ */
 
@@ -68,7 +68,7 @@
   }
   .container { max-width: 720px; margin: 0 auto; padding: 0 24px; position:relative; z-index:2; }
 
-  /* HEADER — catalog cabinet drawer label */
+  /* HEADER, catalog cabinet drawer label */
   header {
     text-align: left;
     padding: 36px 0 24px;
@@ -127,7 +127,7 @@
   }
   .cabinet-meta span:first-child { font-weight: 700; color: var(--ink); }
 
-  /* TABS — like card-catalog divider tabs */
+  /* TABS, like card-catalog divider tabs */
   .tabs {
     display: flex;
     gap: 0;
@@ -168,7 +168,7 @@
     background: var(--card-edge);
   }
 
-  /* PANEL — a single index card */
+  /* PANEL, a single index card */
   .panel {
     background: var(--card);
     border: 1px solid var(--card-shadow);
@@ -269,7 +269,7 @@
 
   .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
 
-  /* VERSE CARDS — sub-cards inside the library list */
+  /* VERSE CARDS, sub-cards inside the library list */
   .verse-card {
     padding: 14px 0 14px 14px;
     border-bottom: 1px dashed var(--rule-strong);
@@ -313,7 +313,7 @@
   }
   .verse-card .actions button { padding: 5px 10px; font-size: 9.5px; letter-spacing: 0.16em; }
 
-  /* REVIEW STAGE — the full index-card presentation */
+  /* REVIEW STAGE, the full index-card presentation */
   .review-stage {
     text-align: left;
     padding: 12px 0;
@@ -498,14 +498,14 @@
   <div class="panel">
     <h2>Add a verse</h2>
     <p class="prompt">Paste the verse exactly. The reference (e.g., "Romans 8:28") goes in its own field. The tool will hide progressively more words across your review sessions.</p>
-    <input type="text" id="add-ref" placeholder="Reference — e.g., Romans 8:28">
+    <input type="text" id="add-ref" placeholder="Reference, e.g., Romans 8:28">
     <textarea id="add-text" placeholder="Verse text..."></textarea>
-    <input type="text" id="add-tag" placeholder="Tag (optional) — e.g., comfort, identity, suffering">
+    <input type="text" id="add-tag" placeholder="Tag (optional), e.g., comfort, identity, suffering">
     <button id="add-btn">Add to vault</button>
   </div>
 
   <div class="panel">
-    <h2>Quick add — Elijah's set</h2>
+    <h2>Quick add, Elijah's set</h2>
     <p class="prompt">Pre-loaded list. Tap to add to your vault.</p>
     <div id="preset-list"></div>
   </div>
@@ -546,7 +546,7 @@
   <p>NO CLOUD · NO REMINDERS · NO STREAK SHAME<br>
   <a href="https://github.com/thebigjah/verse-vault">github.com/thebigjah/verse-vault</a>
   </p>
-  <div class="credit">— PURCELLVENTURES.CO —</div>
+  <div class="credit">, PURCELLVENTURES.CO,</div>
 </footer>
 
 </div>
@@ -646,7 +646,7 @@ function dueCount() {
 function renderReview() {
   const panel = document.getElementById('review-panel');
   if (!state.verses.length) {
-    panel.innerHTML = '<div class="empty">No verses yet. Add some on the Add tab — there are 10 of yours pre-loaded.</div>';
+    panel.innerHTML = '<div class="empty">No verses yet. Add some on the Add tab, there are 10 of yours pre-loaded.</div>';
     return;
   }
   const v = pickVerseForReview();
@@ -674,7 +674,7 @@ function renderReview() {
           return `<span class="word">${escapeHtml(w)}</span>`;
         }).join('')}
       </div>
-      <div class="review-difficulty">level ${v.level + 1} of 5 — ${levelLabels[v.level]}${v.intervalDays ? ' · last interval ' + v.intervalDays + 'd · ef ' + (v.ef || 2.5).toFixed(2) : ''}</div>
+      <div class="review-difficulty">level ${v.level + 1} of 5, ${levelLabels[v.level]}${v.intervalDays ? ' · last interval ' + v.intervalDays + 'd · ef ' + (v.ef || 2.5).toFixed(2) : ''}</div>
       <div style="color:var(--ink-faint);font-size:0.78rem;margin-bottom:0.5rem;">${dueCount()} verse${dueCount()===1?'':'s'} due today</div>
       <div class="difficulty-bar">
         <button onclick="reviewResult('hard')">Hard. Hold here.</button>
@@ -754,9 +754,9 @@ window.gradeTyped = (id) => {
   save();
 
   const verdictText = {
-    easy: `<strong style="color:var(--done);">${pct}% — clean.</strong> Advanced two levels.`,
-    ok: `<strong style="color:var(--accent);">${pct}% — okay.</strong> Advanced one level.`,
-    hard: `<strong style="color:#c46a4a;">${pct}% — hold here.</strong> Stayed at level ${v.level + 1}.`,
+    easy: `<strong style="color:var(--done);">${pct}%, clean.</strong> Advanced two levels.`,
+    ok: `<strong style="color:var(--accent);">${pct}%, okay.</strong> Advanced one level.`,
+    hard: `<strong style="color:#c46a4a;">${pct}%, hold here.</strong> Stayed at level ${v.level + 1}.`,
   }[verdict];
 
   document.getElementById('grade-result').innerHTML = `
